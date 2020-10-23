@@ -15,8 +15,10 @@ October 14, 2020
 -   [Model Building](#model-building)
     -   [Tree Based Model (Single)](#tree-based-model-single)
     -   [Boosted Tree Model (Ensemble)](#boosted-tree-model-ensemble)
+-   [Linear Model](#linear-model)
     -   [Training Performance](#training-performance)
 -   [Test Data Performance](#test-data-performance)
+-   [Test Linear Model Performance](#test-linear-model-performance)
 
 Introduction
 ============
@@ -69,11 +71,11 @@ kable(as.array(summary(bikeTrain$cnt)),
 
 | Var1    |    Freq|
 |:--------|-------:|
-| Min.    |   605.0|
-| 1st Qu. |  3144.8|
-| Median  |  4357.5|
-| Mean    |  4267.0|
-| 3rd Qu. |  5480.8|
+| Min.    |   754.0|
+| 1st Qu. |  3032.8|
+| Median  |  4396.0|
+| Mean    |  4310.9|
+| 3rd Qu. |  5475.8|
 | Max.    |  8227.0|
 
 Histogram
@@ -90,7 +92,7 @@ ggplot(bikeTrain, aes(x=cnt)) +
   facet_grid(.~season, labeller = labeller(season = season.lab))
 ```
 
-![](SundayAnalysis_files/figure-markdown_github/unnamed-chunk-33-1.png)
+![](SundayAnalysis_files/figure-markdown_github/unnamed-chunk-18-1.png)
 
 Scatter Plots
 -------------
@@ -108,7 +110,7 @@ ggplot(bikeTrain,aes(x=temp,y=cnt)) +
                      values=c("light blue", "light green", "red", "brown"))
 ```
 
-![](SundayAnalysis_files/figure-markdown_github/unnamed-chunk-34-1.png)
+![](SundayAnalysis_files/figure-markdown_github/unnamed-chunk-19-1.png)
 
 ``` r
 ggplot(bikeTrain,aes(x=atemp,y=cnt)) + 
@@ -121,7 +123,7 @@ ggplot(bikeTrain,aes(x=atemp,y=cnt)) +
                      values=c("light blue", "light green", "red", "brown"))
 ```
 
-![](SundayAnalysis_files/figure-markdown_github/unnamed-chunk-34-2.png)
+![](SundayAnalysis_files/figure-markdown_github/unnamed-chunk-19-2.png)
 
 ``` r
 ggplot(bikeTrain,aes(x=hum,y=cnt)) + 
@@ -134,7 +136,7 @@ ggplot(bikeTrain,aes(x=hum,y=cnt)) +
                      values=c("light blue", "light green", "red", "brown"))
 ```
 
-![](SundayAnalysis_files/figure-markdown_github/unnamed-chunk-34-3.png)
+![](SundayAnalysis_files/figure-markdown_github/unnamed-chunk-19-3.png)
 
 ``` r
 ggplot(bikeTrain,aes(x=windspeed,y=cnt)) + 
@@ -147,7 +149,7 @@ ggplot(bikeTrain,aes(x=windspeed,y=cnt)) +
                      values=c("light blue", "light green", "red", "brown"))
 ```
 
-![](SundayAnalysis_files/figure-markdown_github/unnamed-chunk-34-4.png)
+![](SundayAnalysis_files/figure-markdown_github/unnamed-chunk-19-4.png)
 
 Box Plots
 ---------
@@ -165,7 +167,7 @@ ggplot(bikeTrain, aes(x = as.factor(season), y = cnt)) +
   labs(x = "Season", y = "Daily Bike Rental Count")
 ```
 
-![](SundayAnalysis_files/figure-markdown_github/unnamed-chunk-35-1.png)
+![](SundayAnalysis_files/figure-markdown_github/unnamed-chunk-20-1.png)
 
 ``` r
 ggplot(bikeTrain, aes(x = as.factor(holiday), y = cnt)) +
@@ -176,7 +178,7 @@ ggplot(bikeTrain, aes(x = as.factor(holiday), y = cnt)) +
   labs(x = "Holiday", y = "Average Daily Bike Rental Count")
 ```
 
-![](SundayAnalysis_files/figure-markdown_github/unnamed-chunk-35-2.png)
+![](SundayAnalysis_files/figure-markdown_github/unnamed-chunk-20-2.png)
 
 ``` r
 ggplot(bikeTrain, aes(x = as.factor(weathersit), y = cnt)) +
@@ -188,7 +190,7 @@ ggplot(bikeTrain, aes(x = as.factor(weathersit), y = cnt)) +
   labs(x = "Weather", y = "Average Daily Bike Rental Count")
 ```
 
-![](SundayAnalysis_files/figure-markdown_github/unnamed-chunk-35-3.png)
+![](SundayAnalysis_files/figure-markdown_github/unnamed-chunk-20-3.png)
 
 Model Building
 ==============
@@ -208,7 +210,7 @@ treeFit <- train(cnt ~ season + workingday + temp + atemp + hum + windspeed,
 fancyRpartPlot(treeFit$finalModel)
 ```
 
-![](SundayAnalysis_files/figure-markdown_github/unnamed-chunk-36-1.png)
+![](SundayAnalysis_files/figure-markdown_github/unnamed-chunk-21-1.png)
 
 ``` r
 #Model Tree Plot
@@ -218,8 +220,8 @@ rownames(model1.perf) <- "Single Regression Tree Model"
 model1.perf
 ```
 
-    ##                                  RMSE  Rsquared
-    ## Single Regression Tree Model 1390.983 0.4587357
+    ##                                  RMSE Rsquared
+    ## Single Regression Tree Model 1274.538 0.541101
 
 Boosted Tree Model (Ensemble)
 -----------------------------
@@ -241,7 +243,24 @@ model2.perf
 ```
 
     ##                        RMSE  Rsquared
-    ## Boosted Tree Model 1153.673 0.6583294
+    ## Boosted Tree Model 1122.022 0.6616693
+
+Linear Model
+============
+
+``` r
+lmfit<-lm(cnt ~ season + workingday + temp + atemp + hum + windspeed, data = bikeTrain )
+lmfit
+```
+
+    ## 
+    ## Call:
+    ## lm(formula = cnt ~ season + workingday + temp + atemp + hum + 
+    ##     windspeed, data = bikeTrain)
+    ## 
+    ## Coefficients:
+    ## (Intercept)       season   workingday         temp        atemp          hum    windspeed  
+    ##      1460.2        458.0           NA       2472.0       4003.1      -2213.9       -423.8
 
 Training Performance
 --------------------
@@ -253,8 +272,8 @@ kable(Model.perf, caption = "Model Performance on Training Data", digits = 2)
 
 |                              |     RMSE|  Rsquared|
 |:-----------------------------|--------:|---------:|
-| Single Regression Tree Model |  1390.98|      0.46|
-| Boosted Tree Model           |  1153.67|      0.66|
+| Single Regression Tree Model |  1274.54|      0.54|
+| Boosted Tree Model           |  1122.02|      0.66|
 
 From the models above, the Boosted Tree Model performs the best in terms of training RMSE as well as Rsquared.
 
@@ -277,7 +296,24 @@ kable(pred.perf[,1:2], caption = "Model Performance on Testing Data", digits = 2
 
 |                              |     RMSE|  Rsquared|
 |:-----------------------------|--------:|---------:|
-| Single Regression Tree Model |  1540.48|      0.32|
-| Boosted Tree Model           |  1177.69|      0.60|
+| Single Regression Tree Model |  1333.15|      0.49|
+| Boosted Tree Model           |  1213.38|      0.58|
+
+Test Linear Model Performance
+=============================
+
+``` r
+pred.model.lm <- predict(lmfit,newdata = bikeTest)
+```
+
+    ## Warning in predict.lm(lmfit, newdata = bikeTest): prediction from a rank-deficient fit may be misleading
+
+``` r
+pred.perf.lm <- postResample(pred.model.lm,bikeTest$cnt)
+pred.perf.lm
+```
+
+    ##         RMSE     Rsquared          MAE 
+    ## 1192.7743105    0.6039771  956.7651249
 
 Based on the testing data performance, Boosted Tree Model would be the more optimal model based on test RMSE. This could also be affected by the stochastic nature of splitting the data set into a test and training set. Further work could be done to make sure both test and training set are equally representative.

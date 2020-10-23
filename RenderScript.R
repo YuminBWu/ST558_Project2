@@ -1,5 +1,4 @@
-
-
+library(rmarkdown)
 fileNames <- c("SundayAnalysis.md","MondayAnalysis.md","TuesdayAnalysis.md","WednesdayAnalysis.md","ThursdayAnalysis.md","FridayAnalysis.md","SaturdayAnalysis.md")
 #c("SundayAnalysis.pdf","MondayAnalysis.pdf","TuesdayAnalysis.pdf","WednesdayAnalysis.pdf","ThursdayAnalysis.pdf","FridayAnalysis.pdf","SaturdayAnalysis.pdf")
 #c("SundayAnalysis.md","MondayAnalysis.md","TuesdayAnalysis.md","WednesdayAnalysis.md","ThursdayAnalysis.md","FridayAnalysis.md","SaturdayAnalysis.md")

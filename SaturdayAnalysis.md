@@ -15,8 +15,10 @@ October 14, 2020
 -   [Model Building](#model-building)
     -   [Tree Based Model (Single)](#tree-based-model-single)
     -   [Boosted Tree Model (Ensemble)](#boosted-tree-model-ensemble)
+-   [Linear Model](#linear-model)
     -   [Training Performance](#training-performance)
 -   [Test Data Performance](#test-data-performance)
+-   [Test Linear Model Performance](#test-linear-model-performance)
 
 Introduction
 ============
@@ -69,12 +71,12 @@ kable(as.array(summary(bikeTrain$cnt)),
 
 | Var1    |    Freq|
 |:--------|-------:|
-| Min.    |   959.0|
-| 1st Qu. |  2984.0|
+| Min.    |   627.0|
+| 1st Qu. |  2678.2|
 | Median  |  4617.5|
-| Mean    |  4615.8|
-| 3rd Qu. |  6163.8|
-| Max.    |  8714.0|
+| Mean    |  4561.6|
+| 3rd Qu. |  6239.0|
+| Max.    |  8555.0|
 
 Histogram
 ---------
@@ -218,8 +220,8 @@ rownames(model1.perf) <- "Single Regression Tree Model"
 model1.perf
 ```
 
-    ##                                  RMSE  Rsquared
-    ## Single Regression Tree Model 1767.454 0.3209306
+    ##                                 RMSE  Rsquared
+    ## Single Regression Tree Model 1737.86 0.3999763
 
 Boosted Tree Model (Ensemble)
 -----------------------------
@@ -241,7 +243,24 @@ model2.perf
 ```
 
     ##                        RMSE  Rsquared
-    ## Boosted Tree Model 1441.987 0.5833217
+    ## Boosted Tree Model 1473.487 0.5938991
+
+Linear Model
+============
+
+``` r
+lmfit<-lm(cnt ~ season + workingday + temp + atemp + hum + windspeed, data = bikeTrain )
+lmfit
+```
+
+    ## 
+    ## Call:
+    ## lm(formula = cnt ~ season + workingday + temp + atemp + hum + 
+    ##     windspeed, data = bikeTrain)
+    ## 
+    ## Coefficients:
+    ## (Intercept)       season   workingday         temp        atemp          hum    windspeed  
+    ##      2501.7        469.5           NA     -26530.2      36143.7      -3251.2      -5701.2
 
 Training Performance
 --------------------
@@ -253,8 +272,8 @@ kable(Model.perf, caption = "Model Performance on Training Data", digits = 2)
 
 |                              |     RMSE|  Rsquared|
 |:-----------------------------|--------:|---------:|
-| Single Regression Tree Model |  1767.45|      0.32|
-| Boosted Tree Model           |  1441.99|      0.58|
+| Single Regression Tree Model |  1737.86|      0.40|
+| Boosted Tree Model           |  1473.49|      0.59|
 
 From the models above, the Boosted Tree Model performs the best in terms of training RMSE as well as Rsquared.
 
@@ -277,7 +296,24 @@ kable(pred.perf[,1:2], caption = "Model Performance on Testing Data", digits = 2
 
 |                              |     RMSE|  Rsquared|
 |:-----------------------------|--------:|---------:|
-| Single Regression Tree Model |  1977.83|      0.30|
-| Boosted Tree Model           |  1727.39|      0.47|
+| Single Regression Tree Model |  1779.15|      0.37|
+| Boosted Tree Model           |  1628.99|      0.49|
+
+Test Linear Model Performance
+=============================
+
+``` r
+pred.model.lm <- predict(lmfit,newdata = bikeTest)
+```
+
+    ## Warning in predict.lm(lmfit, newdata = bikeTest): prediction from a rank-deficient fit may be misleading
+
+``` r
+pred.perf.lm <- postResample(pred.model.lm,bikeTest$cnt)
+pred.perf.lm
+```
+
+    ##         RMSE     Rsquared          MAE 
+    ## 1395.1007817    0.5981627 1094.5072600
 
 Based on the testing data performance, Boosted Tree Model would be the more optimal model based on test RMSE. This could also be affected by the stochastic nature of splitting the data set into a test and training set. Further work could be done to make sure both test and training set are equally representative.
