@@ -1,3 +1,4 @@
+
 ---
 title: "Project 2"
 author: "John Rollman"
@@ -181,6 +182,15 @@ rownames(model2.perf) <- "Boosted Tree Model"
 model2.perf
 ```
 
+
+
+# Linear Model  
+
+```{r}
+lmfit<-lm(cnt ~ season + workingday + temp + atemp + hum + windspeed, data = bikeTrain )
+lmfit
+```
+
 ##Training Performance  
 ```{r, message=FALSE, error=FALSE, warning=FALSE }
 Model.perf <- rbind(model1.perf,model2.perf)
@@ -207,5 +217,18 @@ kable(pred.perf[,1:2], caption = "Model Performance on Testing Data", digits = 2
 ```
 
 
+
+#Test Linear Model Performance   
+```{r}
+pred.model.lm <- predict(lmfit,newdata = bikeTest)
+pred.perf.lm <- postResample(pred.model.lm,bikeTest$cnt)
+pred.perf.lm
+```
+
+
+
+
+
 Based on the testing data performance, `r rownames(pred.perf[pred.perf$RMSE==min(pred.perf$RMSE),])` would be the more optimal model based on test RMSE. This could also be affected by the stochastic nature of splitting the data set into a test and training set. Further work could be done to make sure both test and training set are equally representative.  
+
 
